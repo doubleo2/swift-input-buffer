@@ -1,16 +1,39 @@
-//
-//  ContentView.swift
-//  inputbuffer
-//
-//  Created by Enrico Mills on 12/7/21.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+  @StateObject var vm: ViewModel = ViewModel()
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+      Form {
+        VStack(alignment: .leading) {
+          Text("Input Text")
+            .font(.caption)
+          TextField("", text: $vm.inputText)
+        }
+        VStack(alignment: .leading) {
+          Text("Delay (ms)")
+            .font(.caption)
+          TextField("", value: $vm.inputDelay, formatter: NumberFormatter())
+            .keyboardType(.numberPad)
+        }
+        Button(
+          action: {
+            vm.submit()
+          },
+          label: {
+            Text("Submit")
+          })
+        Section("Output") {
+          Text("\(vm.output)")
+        }
+      }
+      .onAppear(perform: {
+        print("onAppear")
+        vm.startConsumer()
+      })
+      .onDisappear(perform: {
+        print("onDisappear")
+        vm.stopConsumer()
+      })
     }
 }
 
